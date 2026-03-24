@@ -39,11 +39,7 @@ if ( ! function_exists( 'abq_sso_bridge_current_path' ) ) {
 }
 
 if ( ! function_exists( 'abq_sso_bridge_handle_legacy_routes' ) ) {
-	function abq_sso_bridge_handle_legacy_routes() {
-		if ( is_admin() || wp_doing_ajax() || ( defined( 'REST_REQUEST' ) && REST_REQUEST ) ) {
-			return;
-		}
-
+	function abq_sso_bridge_get_legacy_redirect_target() {
 		$path     = abq_sso_bridge_current_path();
 		$login    = array( 'log-in', 'login', 'entrar', 'entre-ou-cadastre-se' );
 		$register = array( 'cadastro', 'cadastrar', 'register', 'registro' );
@@ -56,11 +52,54 @@ if ( ! function_exists( 'abq_sso_bridge_handle_legacy_routes' ) ) {
 		}
 
 		if ( $target_base === '' ) {
+			return '';
+		}
+
+		$redirect_to = '';
+		if ( isset( $_GET['redirect_to'] ) ) {
+			$redirect_to = esc_url_raw( wp_unslash( (string) $_GET['redirect_to'] ) );
+		}
+
+		if ( $redirect_to === '' ) {
+			$referer = wp_get_raw_referer();
+			if ( is_string( $referer ) && $referer !== '' ) {
+				$redirect_to = esc_url_raw( $referer );
+			}
+		}
+
+		if ( $redirect_to === '' ) {
+			$redirect_to = home_url( '/' );
+		}
+
+		return add_query_arg( 'redirect_to', $redirect_to, $target_base );
+	}
+
+	function abq_sso_bridge_handle_legacy_routes_early() {
+		if ( is_admin() || wp_doing_ajax() || wp_doing_cron() || ( defined( 'REST_REQUEST' ) && REST_REQUEST ) ) {
 			return;
 		}
 
-		$redirect_to = home_url( '/' );
-		$target      = add_query_arg( 'redirect_to', $redirect_to, $target_base );
+		$target = abq_sso_bridge_get_legacy_redirect_target();
+		if ( $target === '' ) {
+			return;
+		}
+
+		wp_safe_redirect( $target, 302 );
+		exit;
+	}
+
+	add_action( 'init', 'abq_sso_bridge_handle_legacy_routes_early', 0 );
+
+	function abq_sso_bridge_handle_legacy_routes() {
+		if ( is_admin() || wp_doing_ajax() || ( defined( 'REST_REQUEST' ) && REST_REQUEST ) ) {
+			return;
+		}
+
+		$target = abq_sso_bridge_get_legacy_redirect_target();
+		if ( $target === '' ) {
+			return;
+		}
+
 		wp_safe_redirect( $target, 302 );
 		exit;
 	}
