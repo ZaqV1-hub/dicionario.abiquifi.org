@@ -5,16 +5,8 @@
 define( 'WP_USE_THEMES', false );
 require __DIR__ . '/wp-load.php';
 
-// Simple token gate to prevent public access.
-$token = '1234';
-if ( ! isset( $_GET['token'] ) || $_GET['token'] !== $token ) {
-	http_response_code( 403 );
-	echo 'Forbidden';
-	exit;
-}
-
-$old_domain = 'abiquifi.brevia.company';
-$new_domain = 'abiquifi.org.br';
+$old_domain = 'dicionario.abiquifi.org.br';
+$new_domain = 'dicionario.abiquifi.questione.ai';
 
 $replace_pairs = [
 	[ 'from' => 'https://' . $old_domain, 'to' => 'https://' . $new_domain ],
