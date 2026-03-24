@@ -22,13 +22,13 @@ define( 'WP_CACHE', false ); // Added by AccelerateWP
 
 // ** Database settings - You can get this info from your web host ** //
 /** The name of the database for WordPress */
-define( 'DB_NAME', 'dic.abc_teste' );
+define( 'DB_NAME', 'abiquifi_usbl1' );
 
 /** Database username */
-define( 'DB_USER', 'root' );
+define( 'DB_USER', 'abiquifi_usbl1' );
 
 /** Database password */
-define( 'DB_PASSWORD', 'starcraft22(' );
+define( 'DB_PASSWORD', 'M^XU7kGV56^GM2SMiu.86.~5' );
 
 /** Database hostname */
 define( 'DB_HOST', 'localhost' );
